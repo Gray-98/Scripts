@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 # Wrapper to run the Expect script. Ensures `expect` is installed on Debian/Ubuntu.
 
-set -euo pipefail
+set -eu
+# Enable `pipefail` only when running under Bash to avoid errors in shells
+# that don't support this option (for example, if someone runs the script with
+# `sh run_hj.sh` or from zsh). If Bash is present, enable pipefail for safer
+# pipe handling.
+if [ -n "${BASH_VERSION-}" ]; then
+    set -o pipefail
+fi
 
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXPECT_SCRIPT="$THIS_DIR/run_hj.expect"
