@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer to run hj installer wrapper daily
+
+[Timer]
+OnUnitActiveSec=5d
+# or use OnCalendar=*-*-* 03:00:00 for daily at 03:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

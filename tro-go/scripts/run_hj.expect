@@ -1,0 +1,29 @@
+#!/usr/bin/expect -f
+# Expect script to run the remote installer and automatically choose option 5
+# Usage: ./run_hj.expect
+
+set timeout 120
+
+# Command to run: download and pipe to bash
+set cmd {curl -sSL "https://raw.githubusercontent.com/veip007/hj/main/trojan-go.sh" | bash}
+
+# Start the remote installer in a pty so it behaves like an interactive run
+spawn bash -c $cmd
+
+# Try to detect common prompts and send "5" when appropriate.
+# We also send a fallback "5" after a short delay in case the prompt doesn't match.
+expect {
+    -re ".*(请选择|请输入|Choose|Press|Enter).*" {
+        send "5\r"
+        exp_continue
+    }
+    eof {
+        # remote script finished
+    }
+}
+
+# Fallback: ensure a "5" is sent in case no prompt matched (safe short delay)
+after 1000
+catch {send "5\r"}
+
+expect eof

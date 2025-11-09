@@ -1,0 +1,13 @@
+[Unit]
+Description=Run hj installer and auto-select option 5
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+# Update this ExecStart to the absolute path where you place the script on the server
+ExecStart=/usr/local/bin/run_hj.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
