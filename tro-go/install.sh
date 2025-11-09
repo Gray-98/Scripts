@@ -2,7 +2,13 @@
 # One-step installer: after cloning the repo, run ./install.sh to install dependencies,
 # copy scripts to /usr/local/bin, install systemd unit & timer, and enable the timer.
 
-set -euo pipefail
+set -eu
+# Enable `pipefail` when running under Bash. Some shells (or when invoked via
+# `sh`/`zsh`) don't support the `-o pipefail` option and will error with
+# "Illegal option -o pipefail". Check for Bash and enable it only there.
+if [ -n "${BASH_VERSION-}" ]; then
+    set -o pipefail
+fi
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SCRIPTS_DIR="$ROOT_DIR/scripts"
