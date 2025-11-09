@@ -1,9 +1,9 @@
-# Scheduling automated run for hj installer (option 5)
+# Scheduling automated run for hj installer (option 6)
 
 This folder contains example files and instructions to run the remote `trojan-go.sh` installer and automatically choose option 5.
 
 Files added:
-- `../scripts/run_hj.expect` - Expect (Tcl) script that runs the remote installer and sends `5` + Enter.
+- `../scripts/run_hj.expect` - Expect (Tcl) script that runs the remote installer and sends `6` + Enter.
 - `../scripts/run_hj.sh` - Bash wrapper that ensures `expect` is installed and runs the Expect script.
 - `run-hj.service` - Example systemd service (oneshot). Update ExecStart to the correct path.
 - `run-hj.timer` - Example systemd timer that triggers the service daily.
@@ -21,7 +21,7 @@ sudo chmod +x /usr/local/bin/run_hj.sh /usr/local/bin/run_hj.expect
 2. (Optional) Test manually:
 
 ```bash
-# Run interactively and watch the installer run; the expect script will send '5' automatically.
+# Run interactively and watch the installer run; the expect script will send '6' automatically.
 /usr/local/bin/run_hj.sh
 ```
 

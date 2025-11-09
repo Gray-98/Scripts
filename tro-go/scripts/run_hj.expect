@@ -1,8 +1,12 @@
 #!/usr/bin/expect -f
-# Expect script to run the remote installer and automatically choose option 5
+# Expect script to run the remote installer and automatically choose option 6
 # Usage: ./run_hj.expect
 
-set timeout 120
+# Increase timeout because network/installer may take time; make it configurable
+set timeout 300
+
+# Log interaction for debugging (written to /tmp/run_hj.expect.log)
+log_file /tmp/run_hj.expect.log
 
 # Command to run: download and pipe to bash
 set cmd {curl -sSL "https://raw.githubusercontent.com/veip007/hj/main/trojan-go.sh" | bash}
@@ -10,20 +14,23 @@ set cmd {curl -sSL "https://raw.githubusercontent.com/veip007/hj/main/trojan-go.
 # Start the remote installer in a pty so it behaves like an interactive run
 spawn bash -c $cmd
 
-# Try to detect common prompts and send "5" when appropriate.
-# We also send a fallback "5" after a short delay in case the prompt doesn't match.
+# Wait for menu-like prompts and send the desired choice only when a prompt appears.
+# Avoid blind fallback sends which can mis-time the input and be interpreted as invalid.
 expect {
-    -re ".*(请选择|请输入|Choose|Press|Enter).*" {
-        send "5\r"
+    -re ".*(请选择|请输入|Choose an option|Select an option|Select|Press|Enter).*" {
+        # When a menu or prompt is detected, send the option and continue to watch for
+        # any follow-up prompts (confirmations etc.).
+        send "6\r"
+        exp_continue
+    }
+    -re ".*(确认|Confirm|Are you sure|y/n).*" {
+        # If a confirmation is requested, press Enter to accept the default.
+        send "\r"
         exp_continue
     }
     eof {
         # remote script finished
     }
 }
-
-# Fallback: ensure a "5" is sent in case no prompt matched (safe short delay)
-after 1000
-catch {send "5\r"}
 
 expect eof
