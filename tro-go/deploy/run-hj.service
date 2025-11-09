@@ -1,5 +1,5 @@
 [Unit]
-Description=Run hj installer and auto-select option 5
+Description=Run hj installer and auto-select option 6
 After=network.target
 
 [Service]

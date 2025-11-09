@@ -1,6 +1,6 @@
 # Scheduling automated run for hj installer (option 6)
 
-This folder contains example files and instructions to run the remote `trojan-go.sh` installer and automatically choose option 5.
+This folder contains example files and instructions to run the remote `trojan-go.sh` installer and automatically choose option 6.
 
 Files added:
 - `../scripts/run_hj.expect` - Expect (Tcl) script that runs the remote installer and sends `6` + Enter.
