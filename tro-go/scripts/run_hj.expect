@@ -14,16 +14,23 @@ set cmd {curl -sSL "https://raw.githubusercontent.com/veip007/hj/main/trojan-go.
 # Start the remote installer in a pty so it behaves like an interactive run
 spawn bash -c $cmd
 
-# Wait for menu-like prompts and send the desired choice only when a prompt appears.
-# Avoid blind fallback sends which can mis-time the input and be interpreted as invalid.
+# Wait for menu-like prompts and send the desired choice only when a menu is
+# fully printed. Many installers print a numbered menu ending with "0. 退出";
+# wait for that marker to reduce the chance of sending the option too early.
 expect {
-    -re ".*(请选择|请输入|Choose an option|Select an option|Select|Press|Enter).*" {
-        # When a menu or prompt is detected, send the option and continue to watch for
-        # any follow-up prompts (confirmations etc.).
+    -re "0\\.\s*退出" {
+        # Menu likely printed. Small delay to let the prompt appear, then send.
+        after 200
         send "6\r"
         exp_continue
     }
-    -re ".*(确认|Confirm|Are you sure|y/n).*" {
+    -re ".*(请选择|请输入).*" {
+        # Fallback: if a localized prompt appears, wait shortly and send.
+        after 200
+        send "6\r"
+        exp_continue
+    }
+    -re ".*(Confirm|Are you sure|y/n).*" {
         # If a confirmation is requested, press Enter to accept the default.
         send "\r"
         exp_continue
@@ -33,4 +40,9 @@ expect {
     }
 }
 
-expect eof
+# The previous expect block already handles EOF; calling `expect eof` again can
+# raise "spawn id ... not open" if the spawned process already closed the pty.
+# Use `wait` to collect the child's exit status instead.
+set _wait_result [wait]
+set _exit_status [lindex $_wait_result 3]
+puts "remote process exit status: $_exit_status"
